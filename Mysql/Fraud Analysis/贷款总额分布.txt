@@ -1,0 +1,71 @@
+SELECT 
+  a.loan_type,
+  a.非欺诈合同数,
+  b.欺诈合同数,
+  c.无法判断合同数,
+  IFNULL(b.欺诈合同数, 0) / (
+    IFNULL(a.非欺诈合同数, 0) + IFNULL(b.欺诈合同数, 0) + IFNULL(c.无法判断合同数, 0)
+  ) 欺诈率
+FROM
+  (SELECT 
+    CASE WHEN loan_amount <3000 THEN "<3000"
+    WHEN loan_amount >=3000 AND loan_amount<6000 THEN "3000-6000"
+    WHEN loan_amount >=6000 AND loan_amount<9000 THEN "6000-9000"
+    WHEN loan_amount >=9000 AND loan_amount<12000 THEN "9000-12000"
+    WHEN loan_amount >=12000 THEN ">=12000"
+    END  AS loan_type,COUNT(app_no) 非欺诈合同数 
+    FROM `db_invest_qc` 
+  WHERE whether_fraud LIKE "%非欺诈%" 
+    AND (close_date >= DATE_SUB(CURDATE(), INTERVAL 7 DAY) 
+    AND close_date <= DATE_SUB(CURDATE(), INTERVAL 1 DAY) )
+    AND loan_amount IS NOT NULL
+  GROUP BY 
+  ( CASE WHEN loan_amount <3000 THEN "<3000"
+    WHEN loan_amount >=3000 AND loan_amount<6000 THEN "3000-6000"
+    WHEN loan_amount >=6000 AND loan_amount<9000 THEN "6000-9000"
+    WHEN loan_amount >=9000 AND loan_amount<12000 THEN "9000-12000"
+    WHEN loan_amount >=12000 THEN ">=12000"
+    END )) a 
+  LEFT JOIN 
+    (SELECT 
+    CASE WHEN loan_amount <3000 THEN "<3000"
+    WHEN loan_amount >=3000 AND loan_amount<6000 THEN "3000-6000"
+    WHEN loan_amount >=6000 AND loan_amount<9000 THEN "6000-9000"
+    WHEN loan_amount >=9000 AND loan_amount<12000 THEN "9000-12000"
+    WHEN loan_amount >=12000 THEN ">=12000"
+    END AS loan_type,COUNT(app_no)欺诈合同数 
+    FROM `db_invest_qc` 
+  WHERE whether_fraud LIKE "欺诈%" 
+    AND (close_date >= DATE_SUB(CURDATE(), INTERVAL 7 DAY) 
+    AND close_date <= DATE_SUB(CURDATE(), INTERVAL 1 DAY))
+    AND loan_amount IS NOT NULL
+  GROUP BY 
+  ( CASE WHEN loan_amount <3000 THEN "<3000"
+    WHEN loan_amount >=3000 AND loan_amount<6000 THEN "3000-6000"
+    WHEN loan_amount >=6000 AND loan_amount<9000 THEN "6000-9000"
+    WHEN loan_amount >=9000 AND loan_amount<12000 THEN "9000-12000"
+    WHEN loan_amount >=12000 THEN ">=12000"
+    END )) b 
+    ON a.loan_type = b.loan_type 
+  LEFT JOIN 
+    (SELECT 
+    CASE WHEN loan_amount <3000 THEN "<3000"
+    WHEN loan_amount >=3000 AND loan_amount<6000 THEN "3000-6000"
+    WHEN loan_amount >=6000 AND loan_amount<9000 THEN "6000-9000"
+    WHEN loan_amount >=9000 AND loan_amount<12000 THEN "9000-12000"
+    WHEN loan_amount >=12000 THEN ">=12000"
+    END AS loan_type,COUNT(app_no)无法判断合同数 
+    FROM `db_invest_qc` 
+  WHERE whether_fraud LIKE "%无法%" 
+    AND (close_date >= DATE_SUB(CURDATE(), INTERVAL 7 DAY) 
+    AND close_date <= DATE_SUB(CURDATE(), INTERVAL 1 DAY))
+    AND loan_amount IS NOT NULL
+  GROUP BY 
+  ( CASE WHEN loan_amount <3000 THEN "<3000"
+    WHEN loan_amount >=3000 AND loan_amount<6000 THEN "3000-6000"
+    WHEN loan_amount >=6000 AND loan_amount<9000 THEN "6000-9000"
+    WHEN loan_amount >=9000 AND loan_amount<12000 THEN "9000-12000"
+    WHEN loan_amount >=12000 THEN ">=12000"
+    END )) c 
+    ON a.loan_type = c.loan_type
+ORDER BY 欺诈合同数 DESC 

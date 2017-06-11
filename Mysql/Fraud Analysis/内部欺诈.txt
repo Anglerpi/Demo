@@ -1,0 +1,47 @@
+SELECT a.省份,SUM(a.内部欺诈数) 内部欺诈数 ##内部欺诈省份分布
+FROM 
+(
+SELECT 	province 省份,COUNT(app_no) 内部欺诈数  
+FROM `db_invest_qc`
+WHERE (fraud_type_1  LIKE "%内部欺诈%" )
+AND (close_date>=DATE_SUB(CURDATE(),INTERVAL 7 DAY) AND close_date<=DATE_SUB(CURDATE(),INTERVAL 1 DAY))
+GROUP BY province
+UNION ALL
+SELECT 	province 省份,COUNT(app_no) 内部欺诈数  
+FROM `db_invest_qc`
+WHERE (fraud_type_2  LIKE "%内部欺诈%" )
+AND (close_date>=DATE_SUB(CURDATE(),INTERVAL 7 DAY) AND close_date<=DATE_SUB(CURDATE(),INTERVAL 1 DAY))
+GROUP BY province
+UNION ALL
+SELECT 	province 省份,COUNT(app_no) 内部欺诈数  
+FROM `db_invest_qc`
+WHERE (fraud_type_3  LIKE "%内部欺诈%" )
+AND (close_date>=DATE_SUB(CURDATE(),INTERVAL 7 DAY) AND close_date<=DATE_SUB(CURDATE(),INTERVAL 1 DAY))
+GROUP BY province)a
+GROUP BY a.省份
+ORDER BY 内部欺诈数 DESC
+
+
+SELECT a.城市,SUM(a.内部欺诈数) 内部欺诈数  ##内部欺诈城市分布top 20
+FROM 
+(
+SELECT 	city 城市,COUNT(app_no) 内部欺诈数  
+FROM `db_invest_qc`
+WHERE (fraud_type_1  LIKE "%内部欺诈%" )
+AND (close_date>=DATE_SUB(CURDATE(),INTERVAL 7 DAY) AND close_date<=DATE_SUB(CURDATE(),INTERVAL 1 DAY))
+GROUP BY city
+UNION ALL
+SELECT 	city 城市,COUNT(app_no) 内部欺诈数  
+FROM `db_invest_qc`
+WHERE (fraud_type_2  LIKE "%内部欺诈%" )
+AND (close_date>=DATE_SUB(CURDATE(),INTERVAL 7 DAY) AND close_date<=DATE_SUB(CURDATE(),INTERVAL 1 DAY))
+GROUP BY city
+UNION ALL
+SELECT 	city 城市,COUNT(app_no) 内部欺诈数 
+FROM `db_invest_qc`
+WHERE (fraud_type_3  LIKE "%内部欺诈%" )
+AND (close_date>=DATE_SUB(CURDATE(),INTERVAL 7 DAY) AND close_date<=DATE_SUB(CURDATE(),INTERVAL 1 DAY))
+GROUP BY city)a
+GROUP BY a.城市
+ORDER BY 内部欺诈数 DESC
+LIMIT 20

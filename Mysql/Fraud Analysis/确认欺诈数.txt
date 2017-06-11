@@ -1,0 +1,25 @@
+SELECT DATE_SUB(CURDATE(),INTERVAL 1 DAY) 时间,a.close_number 结案合同数,b.fraud_number 欺诈合同数,b.fraud_number/a.close_number 确认欺诈率
+FROM (
+SELECT COUNT(app_no) close_number ##常规结案合同数
+FROM `db_invest_qc`
+WHERE close_date>=DATE_SUB(CURDATE(),INTERVAL 7 DAY) AND close_date<=DATE_SUB(CURDATE(),INTERVAL 1 DAY)
+AND `db_invest_qc`.`antifraud_push_source` NOT LIKE "%美业%"
+AND case_grade NOT LIKE "%特殊（S）%"
+) a,
+(
+SELECT COUNT(app_no) fraud_number ##确认欺诈合同数
+FROM `db_invest_qc`
+WHERE close_date>=DATE_SUB(CURDATE(),INTERVAL 7 DAY) AND close_date<=DATE_SUB(CURDATE(),INTERVAL 1 DAY)
+AND `db_invest_qc`.`antifraud_push_source` NOT LIKE "%美业%"
+AND case_grade NOT LIKE "%特殊%"
+AND whether_fraud LIKE "欺诈%"
+)b
+
+
+SELECT pro_type 类型,COUNT(app_no) 欺诈合同数 ##确认欺诈合同分类
+FROM `db_invest_qc`
+WHERE close_date>=DATE_SUB(CURDATE(),INTERVAL 7 DAY) AND close_date<=DATE_SUB(CURDATE(),INTERVAL 1 DAY)
+AND `db_invest_qc`.`antifraud_push_source` NOT LIKE "%美业%"
+AND case_grade NOT LIKE "%特殊%"
+AND whether_fraud LIKE "欺诈%"
+GROUP BY pro_type

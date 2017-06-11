@@ -1,0 +1,47 @@
+SELECT "M",a.非欺诈合同数,b.欺诈合同数,c.无法判断合同数,b.欺诈合同数/(a.非欺诈合同数+b.欺诈合同数+c.无法判断合同数) 欺诈合同占比
+FROM 
+(
+SELECT COUNT(app_no) 非欺诈合同数
+FROM `db_invest_qc`
+WHERE whether_fraud LIKE "%非欺诈%"
+AND close_date>=DATE_SUB(CURDATE(),INTERVAL 7 DAY) AND close_date <=DATE_SUB(CURDATE(),INTERVAL 1 DAY)
+AND sex LIKE  "%M%"
+)a,
+(
+SELECT COUNT(app_no) 欺诈合同数
+FROM `db_invest_qc`
+WHERE whether_fraud LIKE "欺诈%"
+AND close_date>=DATE_SUB(CURDATE(),INTERVAL 7 DAY) AND close_date <=DATE_SUB(CURDATE(),INTERVAL 1 DAY)
+AND sex LIKE  "%M%"
+)b,
+(
+SELECT COUNT(app_no) 无法判断合同数
+FROM `db_invest_qc`
+WHERE whether_fraud LIKE "%无法%"
+AND close_date>=DATE_SUB(CURDATE(),INTERVAL 7 DAY) AND close_date <=DATE_SUB(CURDATE(),INTERVAL 1 DAY)
+AND sex LIKE  "%M%"
+)c
+UNION ALL
+SELECT "F",a.非欺诈合同数,b.欺诈合同数,c.无法判断合同数,b.欺诈合同数/(a.非欺诈合同数+b.欺诈合同数+c.无法判断合同数) 欺诈合同占比
+FROM 
+(
+SELECT COUNT(app_no) 非欺诈合同数
+FROM `db_invest_qc`
+WHERE whether_fraud LIKE "%非欺诈%"
+AND close_date>=DATE_SUB(CURDATE(),INTERVAL 7 DAY) AND close_date <=DATE_SUB(CURDATE(),INTERVAL 1 DAY)
+AND sex LIKE "%F%"
+)a,
+(
+SELECT COUNT(app_no) 欺诈合同数
+FROM `db_invest_qc`
+WHERE whether_fraud LIKE "欺诈%"
+AND close_date>=DATE_SUB(CURDATE(),INTERVAL 7 DAY) AND close_date <=DATE_SUB(CURDATE(),INTERVAL 1 DAY)
+AND sex LIKE "%F%"
+)b,
+(
+SELECT COUNT(app_no) 无法判断合同数
+FROM `db_invest_qc`
+WHERE whether_fraud LIKE "%无法%"
+AND close_date>=DATE_SUB(CURDATE(),INTERVAL 7 DAY) AND close_date <=DATE_SUB(CURDATE(),INTERVAL 1 DAY)
+AND sex LIKE "%F%"
+)c

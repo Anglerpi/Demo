@@ -1,0 +1,68 @@
+SELECT "本周合同总数",a.非欺诈合同数,b.欺诈合同数,c.无法判断合同数,b.欺诈合同数/(a.非欺诈合同数+b.欺诈合同数+c.无法判断合同数) 欺诈合同占比
+FROM 
+(
+SELECT COUNT(app_no) 非欺诈合同数
+FROM `db_invest_qc`
+WHERE whether_fraud LIKE "%非欺诈%"
+AND close_date>=DATE_SUB(CURDATE(),INTERVAL 7 DAY) AND close_date <=DATE_SUB(CURDATE(),INTERVAL 1 DAY)
+)a,
+(
+SELECT COUNT(app_no) 欺诈合同数
+FROM `db_invest_qc`
+WHERE whether_fraud LIKE "欺诈%"
+AND close_date>=DATE_SUB(CURDATE(),INTERVAL 7 DAY) AND close_date <=DATE_SUB(CURDATE(),INTERVAL 1 DAY)
+)b,
+(
+SELECT COUNT(app_no) 无法判断合同数
+FROM `db_invest_qc`
+WHERE whether_fraud LIKE "%无法%"
+AND close_date>=DATE_SUB(CURDATE(),INTERVAL 7 DAY) AND close_date <=DATE_SUB(CURDATE(),INTERVAL 1 DAY)
+)c
+UNION ALL
+SELECT "商品贷",a.非欺诈合同数,b.欺诈合同数,c.无法判断合同数,b.欺诈合同数/(a.非欺诈合同数+b.欺诈合同数+c.无法判断合同数) 欺诈合同占比
+FROM 
+(
+SELECT COUNT(app_no) 非欺诈合同数
+FROM `db_invest_qc`
+WHERE whether_fraud LIKE "%非欺诈%"
+AND close_date>=DATE_SUB(CURDATE(),INTERVAL 7 DAY) AND close_date <=DATE_SUB(CURDATE(),INTERVAL 1 DAY)
+AND pro_type LIKE "%商品贷%"
+)a,
+(
+SELECT COUNT(app_no) 欺诈合同数
+FROM `db_invest_qc`
+WHERE whether_fraud LIKE "欺诈%"
+AND close_date>=DATE_SUB(CURDATE(),INTERVAL 7 DAY) AND close_date <=DATE_SUB(CURDATE(),INTERVAL 1 DAY)
+AND pro_type LIKE "%商品贷%"
+)b,
+(
+SELECT COUNT(app_no) 无法判断合同数
+FROM `db_invest_qc`
+WHERE whether_fraud LIKE "%无法%"
+AND close_date>=DATE_SUB(CURDATE(),INTERVAL 7 DAY) AND close_date <=DATE_SUB(CURDATE(),INTERVAL 1 DAY)
+AND pro_type LIKE "%商品贷%"
+)c
+UNION ALL
+SELECT "现金贷",a.非欺诈合同数,b.欺诈合同数,c.无法判断合同数,b.欺诈合同数/(a.非欺诈合同数+b.欺诈合同数+c.无法判断合同数) 欺诈合同占比
+FROM 
+(
+SELECT COUNT(app_no) 非欺诈合同数
+FROM `db_invest_qc`
+WHERE whether_fraud LIKE "%非欺诈%"
+AND close_date>=DATE_SUB(CURDATE(),INTERVAL 7 DAY) AND close_date <=DATE_SUB(CURDATE(),INTERVAL 1 DAY)
+AND pro_type LIKE "%现金贷%"
+)a,
+(
+SELECT COUNT(app_no) 欺诈合同数
+FROM `db_invest_qc`
+WHERE whether_fraud LIKE "欺诈%"
+AND close_date>=DATE_SUB(CURDATE(),INTERVAL 7 DAY) AND close_date <=DATE_SUB(CURDATE(),INTERVAL 1 DAY)
+AND pro_type LIKE "%现金贷%"
+)b,
+(
+SELECT COUNT(app_no) 无法判断合同数
+FROM `db_invest_qc`
+WHERE whether_fraud LIKE "%无法%"
+AND close_date>=DATE_SUB(CURDATE(),INTERVAL 7 DAY) AND close_date <=DATE_SUB(CURDATE(),INTERVAL 1 DAY)
+AND pro_type LIKE "%现金贷%"
+)c

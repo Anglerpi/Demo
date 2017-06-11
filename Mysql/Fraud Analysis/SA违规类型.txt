@@ -1,0 +1,22 @@
+/*SA违规类型*/
+select a.sales_viola_status_1 违规类型,sum(a.违规数)
+FROM( 
+SELECT sales_viola_status_1,COUNT(DISTINCT app_no) 违规数
+FROM `db_invest_qc`
+WHERE (close_date>=DATE_SUB(CURDATE(),INTERVAL 7 DAY) AND close_date<=DATE_SUB(CURDATE(),INTERVAL 1 DAY))
+AND sales_violation LIKE "%是%" AND sales_viola_status_1 IS NOT NULL
+GROUP BY sales_viola_status_1
+UNION ALL
+SELECT sales_viola_status_2,COUNT(DISTINCT app_no) 违规数
+FROM `db_invest_qc`
+WHERE (close_date>=DATE_SUB(CURDATE(),INTERVAL 7 DAY) AND close_date<=DATE_SUB(CURDATE(),INTERVAL 1 DAY))
+AND sales_violation LIKE "%是%" AND sales_viola_status_2 IS NOT NULL
+GROUP BY sales_viola_status_2
+UNION ALL
+SELECT sales_viola_status_3,COUNT(DISTINCT app_no) 违规数
+FROM `db_invest_qc`
+WHERE (close_date>=DATE_SUB(CURDATE(),INTERVAL 7 DAY) AND close_date<=DATE_SUB(CURDATE(),INTERVAL 1 DAY))
+AND sales_violation LIKE "%是%" AND sales_viola_status_3 IS NOT NULL
+GROUP BY sales_viola_status_3
+)a
+group by a.sales_viola_status_1

@@ -1,0 +1,48 @@
+SELECT 
+  d.loan_terms,
+  a.非欺诈合同数,
+  b.欺诈合同数,
+  c.无法判断合同数,
+  IFNULL(b.欺诈合同数, 0) / (
+    IFNULL(a.非欺诈合同数, 0) + IFNULL(b.欺诈合同数, 0) + IFNULL(c.无法判断合同数, 0)
+  ) 欺诈合同占比
+FROM
+(SELECT DISTINCT loan_terms
+FROM `db_invest_qc`
+WHERE close_date >= DATE_SUB(CURDATE(), INTERVAL 7 DAY) 
+    AND close_date <= DATE_SUB(CURDATE(), INTERVAL 1 DAY) 
+    AND loan_terms IS NOT NULL)d
+    LEFT JOIN 
+  (SELECT 
+    loan_terms,
+    COUNT(app_no) 非欺诈合同数 
+  FROM
+    `db_invest_qc` 
+  WHERE whether_fraud LIKE "%非欺诈%" 
+    AND close_date >= DATE_SUB(CURDATE(), INTERVAL 7 DAY) 
+    AND close_date <= DATE_SUB(CURDATE(), INTERVAL 1 DAY) 
+  GROUP BY loan_terms) a 
+      ON d.loan_terms = a.loan_terms 
+  LEFT JOIN 
+    (SELECT 
+    loan_terms,
+    COUNT(app_no) 欺诈合同数 
+  FROM
+    `db_invest_qc` 
+  WHERE whether_fraud LIKE "欺诈%" 
+    AND close_date >= DATE_SUB(CURDATE(), INTERVAL 7 DAY) 
+    AND close_date <= DATE_SUB(CURDATE(), INTERVAL 1 DAY) 
+  GROUP BY loan_terms) b 
+      ON d.loan_terms = b.loan_terms 
+  LEFT JOIN 
+    (SELECT 
+    loan_terms,
+    COUNT(app_no) 无法判断合同数 
+  FROM
+    `db_invest_qc` 
+  WHERE whether_fraud LIKE "%非欺诈%" 
+    AND close_date >= DATE_SUB(CURDATE(), INTERVAL 7 DAY) 
+    AND close_date <= DATE_SUB(CURDATE(), INTERVAL 1 DAY) 
+  GROUP BY loan_terms) c 
+      ON d.loan_terms = c.loan_terms 
+ORDER BY loan_terms ASC 

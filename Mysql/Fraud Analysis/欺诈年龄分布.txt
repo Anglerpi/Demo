@@ -1,0 +1,160 @@
+SELECT 
+  a.age,
+  a.非欺诈合同数,
+  b.欺诈合同数,
+  c.无法判断合同数,
+  IFNULL(b.欺诈合同数, 0) / (
+    IFNULL(a.非欺诈合同数, 0) + IFNULL(b.欺诈合同数, 0) + IFNULL(c.无法判断合同数, 0)
+  ) 欺诈合同占比,
+  d.平均确认欺诈率 
+FROM
+  (SELECT 
+    CASE
+      WHEN (YEAR(CURDATE()) - SUBSTRING(client_id, 7, 4)) >= 18 
+      AND (YEAR(CURDATE()) - SUBSTRING(client_id, 7, 4)) < 25 
+      THEN "18-25" 
+      WHEN (YEAR(CURDATE()) - SUBSTRING(client_id, 7, 4)) >= 25 
+      AND (YEAR(CURDATE()) - SUBSTRING(client_id, 7, 4)) < 30 
+      THEN "25-30" 
+      WHEN (YEAR(CURDATE()) - SUBSTRING(client_id, 7, 4)) >= 30 
+      AND (YEAR(CURDATE()) - SUBSTRING(client_id, 7, 4)) < 35 
+      THEN "30-35" 
+      WHEN (YEAR(CURDATE()) - SUBSTRING(client_id, 7, 4))>= 35 
+      AND (YEAR(CURDATE()) - SUBSTRING(client_id, 7, 4)) < 40 
+      THEN "35-40" 
+      WHEN (YEAR(CURDATE()) - SUBSTRING(client_id, 7, 4)) > 40 
+      THEN ">=40" 
+    END AS age,
+    COUNT(app_no) 非欺诈合同数 
+  FROM
+    `db_invest_qc` 
+  WHERE whether_fraud LIKE "%非欺诈%" 
+    AND close_date >= DATE_SUB(CURDATE(), INTERVAL 7 DAY) 
+    AND close_date <= DATE_SUB(CURDATE(), INTERVAL 1 DAY) 
+  GROUP BY 
+   (
+    CASE
+      WHEN (YEAR(CURDATE()) - SUBSTRING(client_id, 7, 4)) >= 18 
+      AND (YEAR(CURDATE()) - SUBSTRING(client_id, 7, 4)) < 25 
+      THEN "18-25" 
+      WHEN (YEAR(CURDATE()) - SUBSTRING(client_id, 7, 4)) >= 25 
+      AND (YEAR(CURDATE()) - SUBSTRING(client_id, 7, 4)) < 30 
+      THEN "25-30" 
+      WHEN (YEAR(CURDATE()) - SUBSTRING(client_id, 7, 4)) >= 30 
+      AND (YEAR(CURDATE()) - SUBSTRING(client_id, 7, 4)) < 35 
+      THEN "30-35" 
+      WHEN (YEAR(CURDATE()) - SUBSTRING(client_id, 7, 4))>= 35 
+      AND (YEAR(CURDATE()) - SUBSTRING(client_id, 7, 4)) < 40 
+      THEN "35-40" 
+      WHEN (YEAR(CURDATE()) - SUBSTRING(client_id, 7, 4)) > 40 
+      THEN ">=40" 
+    END ) )a
+     LEFT JOIN 
+    (SELECT 
+    CASE
+      WHEN (YEAR(CURDATE()) - SUBSTRING(client_id, 7, 4)) >= 18 
+      AND (YEAR(CURDATE()) - SUBSTRING(client_id, 7, 4)) < 25 
+      THEN "18-25" 
+      WHEN (YEAR(CURDATE()) - SUBSTRING(client_id, 7, 4)) >= 25 
+      AND (YEAR(CURDATE()) - SUBSTRING(client_id, 7, 4)) < 30 
+      THEN "25-30" 
+      WHEN (YEAR(CURDATE()) - SUBSTRING(client_id, 7, 4)) >= 30 
+      AND (YEAR(CURDATE()) - SUBSTRING(client_id, 7, 4)) < 35 
+      THEN "30-35" 
+      WHEN (YEAR(CURDATE()) - SUBSTRING(client_id, 7, 4))>= 35 
+      AND (YEAR(CURDATE()) - SUBSTRING(client_id, 7, 4)) < 40 
+      THEN "35-40" 
+      WHEN (YEAR(CURDATE()) - SUBSTRING(client_id, 7, 4)) > 40 
+      THEN ">=40" 
+    END AS age,
+    COUNT(app_no) 欺诈合同数 
+  FROM
+    `db_invest_qc` 
+  WHERE whether_fraud LIKE "欺诈%" 
+    AND close_date >= DATE_SUB(CURDATE(), INTERVAL 7 DAY) 
+    AND close_date <= DATE_SUB(CURDATE(), INTERVAL 1 DAY) 
+  GROUP BY 
+   ( CASE
+      WHEN (YEAR(CURDATE()) - SUBSTRING(client_id, 7, 4)) >= 18 
+      AND (YEAR(CURDATE()) - SUBSTRING(client_id, 7, 4)) < 25 
+      THEN "18-25" 
+      WHEN (YEAR(CURDATE()) - SUBSTRING(client_id, 7, 4)) >= 25 
+      AND (YEAR(CURDATE()) - SUBSTRING(client_id, 7, 4)) < 30 
+      THEN "25-30" 
+      WHEN (YEAR(CURDATE()) - SUBSTRING(client_id, 7, 4)) >= 30 
+      AND (YEAR(CURDATE()) - SUBSTRING(client_id, 7, 4)) < 35 
+      THEN "30-35" 
+      WHEN (YEAR(CURDATE()) - SUBSTRING(client_id, 7, 4))>= 35 
+      AND (YEAR(CURDATE()) - SUBSTRING(client_id, 7, 4)) < 40 
+      THEN "35-40" 
+      WHEN (YEAR(CURDATE()) - SUBSTRING(client_id, 7, 4)) > 40 
+      THEN ">=40" 
+    END)) b 
+    ON a.age = b.age 
+  LEFT JOIN 
+    (SELECT 
+    CASE
+      WHEN (YEAR(CURDATE()) - SUBSTRING(client_id, 7, 4)) >= 18 
+      AND (YEAR(CURDATE()) - SUBSTRING(client_id, 7, 4)) < 25 
+      THEN "18-25" 
+      WHEN (YEAR(CURDATE()) - SUBSTRING(client_id, 7, 4)) >= 25 
+      AND (YEAR(CURDATE()) - SUBSTRING(client_id, 7, 4)) < 30 
+      THEN "25-30" 
+      WHEN (YEAR(CURDATE()) - SUBSTRING(client_id, 7, 4)) >= 30 
+      AND (YEAR(CURDATE()) - SUBSTRING(client_id, 7, 4)) < 35 
+      THEN "30-35" 
+      WHEN (YEAR(CURDATE()) - SUBSTRING(client_id, 7, 4))>= 35 
+      AND (YEAR(CURDATE()) - SUBSTRING(client_id, 7, 4)) < 40 
+      THEN "35-40" 
+      WHEN (YEAR(CURDATE()) - SUBSTRING(client_id, 7, 4)) > 40 
+      THEN ">=40" 
+    END AS age,
+    COUNT(app_no) 无法判断合同数 
+  FROM
+    `db_invest_qc` 
+  WHERE whether_fraud LIKE "%无法%" 
+    AND close_date >= DATE_SUB(CURDATE(), INTERVAL 7 DAY) 
+    AND close_date <= DATE_SUB(CURDATE(), INTERVAL 1 DAY) 
+  GROUP BY 
+   ( CASE
+      WHEN (YEAR(CURDATE()) - SUBSTRING(client_id, 7, 4)) >= 18 
+      AND (YEAR(CURDATE()) - SUBSTRING(client_id, 7, 4)) < 25 
+      THEN "18-25" 
+      WHEN (YEAR(CURDATE()) - SUBSTRING(client_id, 7, 4)) >= 25 
+      AND (YEAR(CURDATE()) - SUBSTRING(client_id, 7, 4)) < 30 
+      THEN "25-30" 
+      WHEN (YEAR(CURDATE()) - SUBSTRING(client_id, 7, 4)) >= 30 
+      AND (YEAR(CURDATE()) - SUBSTRING(client_id, 7, 4)) < 35 
+      THEN "30-35" 
+      WHEN (YEAR(CURDATE()) - SUBSTRING(client_id, 7, 4))>= 35 
+      AND (YEAR(CURDATE()) - SUBSTRING(client_id, 7, 4)) < 40 
+      THEN "35-40" 
+      WHEN (YEAR(CURDATE()) - SUBSTRING(client_id, 7, 4)) > 40 
+      THEN ">=40" 
+    END)) c 
+    ON a.age = c.age,
+  (SELECT 
+    DATE_SUB(CURDATE(), INTERVAL 1 DAY) 时间,
+    a.close_number 结案合同数,
+    b.fraud_number 欺诈合同数,
+    b.fraud_number / a.close_number 平均确认欺诈率 
+  FROM
+    (SELECT 
+      COUNT(app_no) close_number ##常规结案合同数
+    FROM
+      `db_invest_qc` 
+    WHERE close_date >= DATE_SUB(CURDATE(), INTERVAL 7 DAY) 
+      AND close_date <= DATE_SUB(CURDATE(), INTERVAL 1 DAY) 
+      AND `db_invest_qc`.`antifraud_push_source` NOT LIKE "%美业%" 
+      AND case_grade NOT LIKE "%特殊（S）%") a,
+    (SELECT 
+      COUNT(app_no) fraud_number ##确认欺诈合同数
+    FROM
+      `db_invest_qc` 
+    WHERE close_date >= DATE_SUB(CURDATE(), INTERVAL 7 DAY) 
+      AND close_date <= DATE_SUB(CURDATE(), INTERVAL 1 DAY) 
+      AND `db_invest_qc`.`antifraud_push_source` NOT LIKE "%美业%" 
+      AND case_grade NOT LIKE "%特殊%" 
+      AND whether_fraud LIKE "欺诈%") b) d 
+ WHERE a.age IS NOT NULL
+ORDER BY 欺诈合同数 DESC 
