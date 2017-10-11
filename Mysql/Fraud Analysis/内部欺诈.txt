@@ -1,47 +1,47 @@
-SELECT a.Ê¡·Ý,SUM(a.ÄÚ²¿ÆÛÕ©Êý) ÄÚ²¿ÆÛÕ©Êý ##ÄÚ²¿ÆÛÕ©Ê¡·Ý·Ö²¼
+SELECT a.çœä»½,SUM(a.å†…éƒ¨æ¬ºè¯ˆæ•°) å†…éƒ¨æ¬ºè¯ˆæ•° ##å†…éƒ¨æ¬ºè¯ˆçœä»½åˆ†å¸ƒ
 FROM 
 (
-SELECT 	province Ê¡·Ý,COUNT(app_no) ÄÚ²¿ÆÛÕ©Êý  
+SELECT 	province çœä»½,COUNT(app_no) å†…éƒ¨æ¬ºè¯ˆæ•°  
 FROM `db_invest_qc`
-WHERE (fraud_type_1  LIKE "%ÄÚ²¿ÆÛÕ©%" )
+WHERE (fraud_type_1  LIKE "%å†…éƒ¨æ¬ºè¯ˆ%" )
 AND (close_date>=DATE_SUB(CURDATE(),INTERVAL 7 DAY) AND close_date<=DATE_SUB(CURDATE(),INTERVAL 1 DAY))
 GROUP BY province
 UNION ALL
-SELECT 	province Ê¡·Ý,COUNT(app_no) ÄÚ²¿ÆÛÕ©Êý  
+SELECT 	province çœä»½,COUNT(app_no) å†…éƒ¨æ¬ºè¯ˆæ•°  
 FROM `db_invest_qc`
-WHERE (fraud_type_2  LIKE "%ÄÚ²¿ÆÛÕ©%" )
+WHERE (fraud_type_2  LIKE "%å†…éƒ¨æ¬ºè¯ˆ%" )
 AND (close_date>=DATE_SUB(CURDATE(),INTERVAL 7 DAY) AND close_date<=DATE_SUB(CURDATE(),INTERVAL 1 DAY))
 GROUP BY province
 UNION ALL
-SELECT 	province Ê¡·Ý,COUNT(app_no) ÄÚ²¿ÆÛÕ©Êý  
+SELECT 	province çœä»½,COUNT(app_no) å†…éƒ¨æ¬ºè¯ˆæ•°  
 FROM `db_invest_qc`
-WHERE (fraud_type_3  LIKE "%ÄÚ²¿ÆÛÕ©%" )
+WHERE (fraud_type_3  LIKE "%å†…éƒ¨æ¬ºè¯ˆ%" )
 AND (close_date>=DATE_SUB(CURDATE(),INTERVAL 7 DAY) AND close_date<=DATE_SUB(CURDATE(),INTERVAL 1 DAY))
 GROUP BY province)a
-GROUP BY a.Ê¡·Ý
-ORDER BY ÄÚ²¿ÆÛÕ©Êý DESC
+GROUP BY a.çœä»½
+ORDER BY å†…éƒ¨æ¬ºè¯ˆæ•° DESC
 
 
-SELECT a.³ÇÊÐ,SUM(a.ÄÚ²¿ÆÛÕ©Êý) ÄÚ²¿ÆÛÕ©Êý  ##ÄÚ²¿ÆÛÕ©³ÇÊÐ·Ö²¼top 20
+SELECT a.åŸŽå¸‚,SUM(a.å†…éƒ¨æ¬ºè¯ˆæ•°) å†…éƒ¨æ¬ºè¯ˆæ•°  ##å†…éƒ¨æ¬ºè¯ˆåŸŽå¸‚åˆ†å¸ƒtop 20
 FROM 
 (
-SELECT 	city ³ÇÊÐ,COUNT(app_no) ÄÚ²¿ÆÛÕ©Êý  
+SELECT 	city åŸŽå¸‚,COUNT(app_no) å†…éƒ¨æ¬ºè¯ˆæ•°  
 FROM `db_invest_qc`
-WHERE (fraud_type_1  LIKE "%ÄÚ²¿ÆÛÕ©%" )
+WHERE (fraud_type_1  LIKE "%å†…éƒ¨æ¬ºè¯ˆ%" )
 AND (close_date>=DATE_SUB(CURDATE(),INTERVAL 7 DAY) AND close_date<=DATE_SUB(CURDATE(),INTERVAL 1 DAY))
 GROUP BY city
 UNION ALL
-SELECT 	city ³ÇÊÐ,COUNT(app_no) ÄÚ²¿ÆÛÕ©Êý  
+SELECT 	city åŸŽå¸‚,COUNT(app_no) å†…éƒ¨æ¬ºè¯ˆæ•°  
 FROM `db_invest_qc`
-WHERE (fraud_type_2  LIKE "%ÄÚ²¿ÆÛÕ©%" )
+WHERE (fraud_type_2  LIKE "%å†…éƒ¨æ¬ºè¯ˆ%" )
 AND (close_date>=DATE_SUB(CURDATE(),INTERVAL 7 DAY) AND close_date<=DATE_SUB(CURDATE(),INTERVAL 1 DAY))
 GROUP BY city
 UNION ALL
-SELECT 	city ³ÇÊÐ,COUNT(app_no) ÄÚ²¿ÆÛÕ©Êý 
+SELECT 	city åŸŽå¸‚,COUNT(app_no) å†…éƒ¨æ¬ºè¯ˆæ•° 
 FROM `db_invest_qc`
-WHERE (fraud_type_3  LIKE "%ÄÚ²¿ÆÛÕ©%" )
+WHERE (fraud_type_3  LIKE "%å†…éƒ¨æ¬ºè¯ˆ%" )
 AND (close_date>=DATE_SUB(CURDATE(),INTERVAL 7 DAY) AND close_date<=DATE_SUB(CURDATE(),INTERVAL 1 DAY))
 GROUP BY city)a
-GROUP BY a.³ÇÊÐ
-ORDER BY ÄÚ²¿ÆÛÕ©Êý DESC
-LIMIT 20
+GROUP BY a.åŸŽå¸‚
+ORDER BY å†…éƒ¨æ¬ºè¯ˆæ•° DESC
+LIMIT 30
